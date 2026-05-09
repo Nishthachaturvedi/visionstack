@@ -1,0 +1,2484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>VisionStack — We Build Websites That Build Your Brand</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+<style>
+/* ===========================
+   CSS VARIABLES & RESET
+=========================== */
+:root {
+  --gold: #4c0bef;
+  --gold-light: #4747e8;
+  --gold-dim: #19e0d6;
+  --purple: #4a0e8f;
+  --purple-deep: #1a0533;
+  --purple-mid: #2d0760;
+  --purple-glow: #7b2fff;
+  --silver: #c0c8d8;
+  --silver-dim: #7a8399;
+  --black: #050508;
+  --black-2: #0a0a10;
+  --glass: rgba(255,255,255,0.04);
+  --glass-border: rgba(2, 132, 123, 0.18);
+  --font-display: 'Cormorant Garamond', serif;
+  --font-ui: 'Syne', sans-serif;
+  --font-body: 'DM Sans', sans-serif;
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;overflow-x:hidden}
+body{
+  background:var(--black);
+  color:var(--silver);
+  font-family:var(--font-body);
+  cursor:auto;
+  overflow-x:hidden;
+}
+
+/* ===========================
+   CUSTOM CURSOR
+=========================== */
+#cursor{
+  position:fixed;width:12px;height:12px;
+  background:var(--gold);border-radius:50%;
+  pointer-events:none;z-index:99999;
+  transform:translate(-50%,-50%);
+  transition:transform .1s,width .3s,height .3s,background .3s;
+  mix-blend-mode:difference;
+}
+#cursor-trail{
+  position:fixed;width:36px;height:36px;
+  border:1px solid rgba(201,162,39,0.5);
+  border-radius:50%;pointer-events:none;z-index:99998;
+  transform:translate(-50%,-50%);
+  transition:all .15s ease-out;
+}
+body:hover #cursor{opacity:1}
+
+/* ===========================
+   LOADING SCREEN
+=========================== */
+#loader{
+  position:fixed;inset:0;background:var(--black);
+  z-index:100000;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:24px;
+}
+.loader-logo{
+  font-family:var(--font-ui);font-size:2.4rem;
+  font-weight:800;letter-spacing:.12em;
+  background:linear-gradient(135deg,var(--gold),var(--gold-light),var(--purple-glow));
+  background-clip:text;
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  animation:shimmer 2s infinite;
+}
+.loader-bar{
+    width:220px;
+    height:2px;
+    background: rgba(255,255,255,0.08);
+    border-radius:2px;
+    overflow:hidden;
+}
+.loader-fill{
+    height:100%;
+    background:linear-gradient(90deg,var(--silver),var(--purple-glow));
+    border-radius:2px;animation:loadfill 2.2s ease forwards
+}
+@keyframes loadfill {
+    from {
+        width:0;
+    }
+
+    to {
+        width:100%;
+    }
+}
+@keyframes shimmer {
+    0%,100% {
+        filter: brightness(1);
+    }
+
+    50% {
+        filter: brightness(1.4);
+    }
+}
+
+/* ===========================
+   PARTICLES CANVAS
+=========================== */
+#particles-canvas{
+  position:fixed;inset:0;z-index:0;pointer-events:none;
+}
+
+/* ===========================
+   SCROLLBAR
+=========================== */
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:var(--black-2)}
+::-webkit-scrollbar-thumb{background:var(--gold-dim);border-radius:4px}
+
+/* ===========================
+   NAVBAR
+=========================== */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:1000;
+  padding:20px 60px;display:flex;align-items:center;justify-content:space-between;
+  transition:all .4s ease;
+}
+nav.scrolled{
+  background:rgba(5,5,8,0.9);
+  backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--glass-border);
+  padding:14px 60px;
+}
+
+.nav-links{display:flex;align-items:center;gap:36px;list-style:none}
+.nav-links a{
+  font-family:var(--font-ui);font-size:.78rem;font-weight:600;
+  letter-spacing:.12em;text-transform:uppercase;
+  color:var(--silver-dim);text-decoration:none;
+  transition:color .3s;position:relative;
+}
+.nav-links a::after{
+  content:'';position:absolute;bottom:-4px;left:0;right:0;
+  height:1px;background:var(--gold);
+  transform:scaleX(0);transition:transform .3s;
+}
+.nav-links a:hover{color:var(--gold)}
+.nav-links a:hover::after{transform:scaleX(1)}
+.nav-cta{
+  font-family:var(--font-ui);font-size:.75rem;font-weight:700;
+  letter-spacing:.12em;text-transform:uppercase;
+  padding:10px 26px;border:1px solid var(--gold);
+  color:var(--gold);background:transparent;
+  text-decoration:none;cursor:pointer;
+  transition:all .3s;clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);
+}
+.nav-cta:hover{background:var(--gold);color:var(--black)}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;background:none;border:none}
+.hamburger span{width:24px;height:1.5px;background:var(--gold);transition:all .3s}
+
+/* ===========================
+   HERO SECTION
+=========================== */
+#hero{
+  position:relative;min-height:100vh;
+  display:flex;align-items:center;justify-content:center;
+  overflow:hidden;z-index:1;
+}
+.hero-bg{
+  position:absolute;inset:0;
+  background:radial-gradient(ellipse 80% 60% at 50% 40%,rgba(74,14,143,0.35) 0%,transparent 70%),
+             radial-gradient(ellipse 40% 40% at 20% 80%,rgba(123,47,255,0.15) 0%,transparent 60%),
+             radial-gradient(ellipse 50% 30% at 80% 20%,rgba(201,162,39,0.1) 0%,transparent 60%),
+             var(--black);
+}
+.hero-grid{
+  position:absolute;inset:0;
+  background-image:linear-gradient(rgba(201,162,39,0.04) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(201,162,39,0.04) 1px,transparent 1px);
+  background-size:80px 80px;
+  mask-image:radial-gradient(ellipse 80% 80% at 50% 50%,black 0%,transparent 100%);
+}
+.hero-content{
+  position:relative;z-index:2;text-align:center;
+  max-width:1000px;padding:0 40px;
+}
+.hero-badge{
+  display:inline-flex;align-items:center;gap:8px;
+  font-family:var(--font-ui);font-size:.7rem;letter-spacing:.2em;
+  text-transform:uppercase;color:var(--gold);
+  border:1px solid rgba(201,162,39,0.3);
+  padding:8px 20px;border-radius:100px;
+  background:rgba(201,162,39,0.06);
+  margin-bottom:32px;
+  animation:fadeUp .8s .2s both;
+}
+.hero-badge::before{
+  content:'';width:6px;height:6px;border-radius:50%;
+  background:var(--gold);animation:pulse 2s infinite;
+}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(1.5)}}
+.hero-title{
+  font-family:var(--font-display);font-size:clamp(3rem,7vw,6.5rem);
+  font-weight:300;line-height:1.1;letter-spacing:-.01em;
+  color:#fff;margin-bottom:16px;
+  animation:fadeUp .8s .4s both;
+}
+.hero-title .accent{
+  font-style:italic;font-weight:600;
+  background:linear-gradient(135deg,var(--gold-light),var(--gold),#f0d060);
+  background-clip:text;
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+.hero-typewriter{
+  font-family:var(--font-display);font-size:clamp(1.5rem,3.5vw,3rem);
+  font-weight:300;font-style:italic;
+  color:var(--silver-dim);margin-bottom:40px;min-height:48px;
+  animation:fadeUp .8s .6s both;
+}
+.hero-typewriter .cursor-blink{
+  display:inline-block;width:2px;height:.9em;
+  background:var(--gold);margin-left:2px;
+  animation:blink .9s step-end infinite;vertical-align:text-bottom;
+}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+.hero-actions{
+  display:flex;align-items:center;justify-content:center;gap:20px;flex-wrap:wrap;
+  animation:fadeUp .8s .8s both;
+}
+.btn-primary{
+  font-family:var(--font-ui);font-size:.8rem;font-weight:700;
+  letter-spacing:.15em;text-transform:uppercase;
+  padding:16px 40px;background:linear-gradient(135deg,var(--gold),var(--gold-dim));
+  color:var(--black);border:none;cursor:pointer;
+  clip-path:polygon(12px 0%,100% 0%,calc(100% - 12px) 100%,0% 100%);
+  position:relative;overflow:hidden;transition:all .3s;text-decoration:none;display:inline-block;
+}
+.btn-primary::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,var(--gold-light),var(--gold));
+  opacity:0;transition:opacity .3s;
+}
+.btn-primary:hover::before{opacity:1}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 12px 40px rgba(201,162,39,0.4)}
+.btn-primary span{position:relative;z-index:1}
+.btn-secondary{
+  font-family:var(--font-ui);font-size:.8rem;font-weight:600;
+  letter-spacing:.15em;text-transform:uppercase;
+  padding:15px 38px;background:transparent;
+  border:1px solid rgba(201,162,39,0.5);color:var(--gold);
+  cursor:pointer;clip-path:polygon(12px 0%,100% 0%,calc(100% - 12px) 100%,0% 100%);
+  transition:all .3s;text-decoration:none;display:inline-block;
+  backdrop-filter:blur(4px);
+}
+.btn-secondary:hover{
+  background:rgba(201,162,39,0.08);border-color:var(--gold);
+  transform:translateY(-2px);box-shadow:0 8px 30px rgba(201,162,39,0.2);
+}
+.hero-scroll-indicator{
+  position:absolute;bottom:40px;left:50%;transform:translateX(-50%);
+  display:flex;flex-direction:column;align-items:center;gap:8px;
+  animation:fadeUp .8s 1.2s both;
+}
+.scroll-text{
+  font-family:var(--font-ui);font-size:.65rem;letter-spacing:.25em;
+  text-transform:uppercase;color:var(--silver-dim);
+}
+.scroll-line{
+  width:1px;height:50px;background:linear-gradient(var(--gold),transparent);
+  animation:scrollline 2s ease infinite;
+}
+@keyframes scrollline{0%{transform:scaleY(0);transform-origin:top}50%{transform:scaleY(1);transform-origin:top}51%{transform:scaleY(1);transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
+
+/* Floating orbs */
+.orb{
+  position:absolute;border-radius:50%;filter:blur(80px);
+  pointer-events:none;animation:float 10s ease-in-out infinite;
+}
+.orb-1{width:500px;height:500px;background:rgba(74,14,143,0.25);top:-100px;right:-100px}
+.orb-2{width:350px;height:350px;background:rgba(201,162,39,0.1);bottom:50px;left:-80px;animation-delay:-4s}
+.orb-3{width:250px;height:250px;background:rgba(123,47,255,0.2);top:40%;right:10%;animation-delay:-7s}
+@keyframes float{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-30px) scale(1.05)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+
+/* ===========================
+   SECTION COMMONS
+=========================== */
+section{position:relative;z-index:1}
+.section-label{
+  font-family:var(--font-ui);font-size:.68rem;letter-spacing:.3em;
+  text-transform:uppercase;color:var(--gold);
+  display:flex;align-items:center;gap:12px;margin-bottom:16px;
+}
+.section-label::before{content:'';width:30px;height:1px;background:var(--gold)}
+.section-title{
+  font-family:var(--font-display);font-size:clamp(2.2rem,4.5vw,3.8rem);
+  font-weight:300;line-height:1.15;color:#fff;margin-bottom:16px;
+}
+.section-title .italic{font-style:italic;font-weight:600;color:var(--gold-light)}
+.section-sub{
+  font-size:.95rem;line-height:1.8;color:var(--silver-dim);
+  max-width:580px;
+}
+.container{max-width:1280px;margin:0 auto;padding:0 60px}
+.section-pad{padding:120px 0}
+
+/* ===========================
+   STATS / COUNTERS
+=========================== */
+#stats{
+  padding:80px 0;
+  border-top:1px solid rgba(201,162,39,0.1);
+  border-bottom:1px solid rgba(201,162,39,0.1);
+  background:linear-gradient(180deg,rgba(74,14,143,0.06) 0%,transparent 100%);
+}
+.stats-grid{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:0;
+}
+.stat-item{
+  text-align:center;padding:40px 20px;
+  border-right:1px solid rgba(201,162,39,0.1);
+  position:relative;
+}
+.stat-item:last-child{border-right:none}
+.stat-num{
+  font-family:var(--font-display);font-size:clamp(2.5rem,4vw,4rem);
+  font-weight:600;color:var(--gold-light);line-height:1;
+  display:block;margin-bottom:8px;
+}
+.stat-label{
+  font-family:var(--font-ui);font-size:.72rem;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--silver-dim);
+}
+
+/* ===========================
+   SERVICES
+=========================== */
+#services{padding:120px 0}
+.services-grid{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+  gap:24px;margin-top:70px;
+}
+.service-card{
+  background:var(--glass);
+  border:1px solid var(--glass-border);
+  backdrop-filter:blur(12px);
+  padding:40px 32px;border-radius:2px;
+  position:relative;overflow:hidden;
+  transition:all .4s ease;cursor:pointer;
+}
+.service-card::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(201,162,39,0.06),transparent);
+  opacity:0;transition:opacity .4s;
+}
+.service-card::after{
+  content:'';position:absolute;top:0;left:0;right:0;
+  height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent);
+  transform:scaleX(0);transition:transform .5s;
+}
+.service-card:hover{
+  transform:translateY(-8px);
+  border-color:rgba(201,162,39,0.35);
+  box-shadow:0 20px 60px rgba(74,14,143,0.3),0 4px 20px rgba(201,162,39,0.1);
+}
+.service-card:hover::before{opacity:1}
+.service-card:hover::after{transform:scaleX(1)}
+.service-icon{
+  width:52px;height:52px;margin-bottom:24px;
+  background:linear-gradient(135deg,rgba(201,162,39,0.15),rgba(123,47,255,0.1));
+  border:1px solid rgba(201,162,39,0.2);border-radius:2px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.4rem;color:var(--gold);
+  transition:all .3s;
+}
+.service-card:hover .service-icon{
+  background:linear-gradient(135deg,rgba(201,162,39,0.25),rgba(123,47,255,0.2));
+  box-shadow:0 0 20px rgba(201,162,39,0.2);
+}
+.service-card h3{
+  font-family:var(--font-ui);font-size:1rem;font-weight:700;
+  letter-spacing:.06em;color:#fff;margin-bottom:12px;
+  text-transform:uppercase;
+}
+.service-card p{font-size:.88rem;line-height:1.75;color:var(--silver-dim)}
+.service-card .learn-more{
+  display:inline-flex;align-items:center;gap:6px;
+  font-family:var(--font-ui);font-size:.72rem;font-weight:600;
+  letter-spacing:.12em;text-transform:uppercase;color:var(--gold);
+  margin-top:20px;text-decoration:none;
+  transition:gap .3s;
+}
+.service-card:hover .learn-more{gap:10px}
+
+/* ===========================
+   PORTFOLIO
+=========================== */
+#portfolio{
+  padding:120px 0;
+  background:linear-gradient(180deg,transparent,rgba(26,5,51,0.3),transparent);
+}
+.portfolio-filters{
+  display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:50px 0 40px;
+}
+.filter-btn{
+  font-family:var(--font-ui);font-size:.72rem;font-weight:600;
+  letter-spacing:.12em;text-transform:uppercase;
+  padding:8px 20px;border:1px solid rgba(201,162,39,0.2);
+  color:var(--silver-dim);background:transparent;cursor:pointer;
+  transition:all .3s;border-radius:1px;
+}
+.filter-btn:hover,.filter-btn.active{
+  border-color:var(--gold);color:var(--gold);
+  background:rgba(201,162,39,0.06);
+}
+.portfolio-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:20px;
+}
+.portfolio-card{
+  position:relative;overflow:hidden;cursor:pointer;
+  aspect-ratio:4/3;background:var(--glass);
+  border:1px solid var(--glass-border);
+}
+.portfolio-card-bg{
+  position:absolute;inset:0;
+  transition:transform .6s ease;
+}
+.portfolio-card:hover .portfolio-card-bg{transform:scale(1.08)}
+.portfolio-overlay{
+  position:absolute;inset:0;
+  background:linear-gradient(to top,rgba(5,5,8,.95) 0%,rgba(5,5,8,.4) 50%,transparent 100%);
+  display:flex;flex-direction:column;justify-content:flex-end;
+  padding:28px;transform:translateY(20px);opacity:0;
+  transition:all .4s ease;
+}
+.portfolio-card:hover .portfolio-overlay{transform:translateY(0);opacity:1}
+.portfolio-overlay h3{
+  font-family:var(--font-display);font-size:1.4rem;font-weight:600;
+  color:#fff;margin-bottom:6px;font-style:italic;
+}
+.portfolio-overlay p{font-size:.8rem;color:var(--silver-dim);margin-bottom:16px}
+.portfolio-overlay a{
+  display:inline-flex;align-items:center;gap:6px;
+  font-family:var(--font-ui);font-size:.7rem;font-weight:700;
+  letter-spacing:.15em;text-transform:uppercase;color:var(--gold);
+  text-decoration:none;border:1px solid var(--gold);
+  padding:7px 16px;transition:all .3s;
+  clip-path:polygon(6px 0%,100% 0%,calc(100% - 6px) 100%,0% 100%);
+}
+.portfolio-overlay a:hover{background:var(--gold);color:var(--black)}
+.portfolio-placeholder{
+  width:100%;height:100%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:3rem;opacity:.12;
+}
+/* Colored project cards */
+.pc-1{background:linear-gradient(135deg,#0f0a2e,#1a0533,#2d0760)}
+.pc-2{background:linear-gradient(135deg,#0a0a10,#1a0a05,#3a1a00)}
+.pc-3{background:linear-gradient(135deg,#0a1a10,#052010,#0a3020)}
+.pc-4{background:linear-gradient(135deg,#1a1505,#2a2008,#1a0a05)}
+.pc-5{background:linear-gradient(135deg,#0a0520,#100840,#180a5a)}
+.pc-6{background:linear-gradient(135deg,#1a0510,#2d0520,#400a28)}
+
+/* ===========================
+   PROCESS / HOW WE WORK
+=========================== */
+#process{padding:120px 0}
+.process-steps{
+  display:grid;grid-template-columns:repeat(5,1fr);gap:0;
+  margin-top:70px;position:relative;
+}
+.process-steps::before{
+  content:'';position:absolute;top:38px;left:10%;right:10%;
+  height:1px;background:linear-gradient(90deg,transparent,var(--gold-dim),transparent);
+}
+.process-step{
+  text-align:center;padding:0 20px;position:relative;
+  opacity:0;transform:translateY(20px);
+  transition:all .5s ease;
+}
+.process-step.visible{opacity:1;transform:translateY(0)}
+.step-number{
+  width:76px;height:76px;border-radius:50%;margin:0 auto 24px;
+  background:var(--black-2);border:1px solid var(--glass-border);
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--font-display);font-size:1.8rem;font-weight:600;
+  color:var(--gold);position:relative;z-index:1;
+  transition:all .4s;
+}
+.process-step:hover .step-number{
+  background:rgba(201,162,39,0.1);border-color:var(--gold);
+  box-shadow:0 0 30px rgba(201,162,39,0.2);
+}
+.step-title{
+  font-family:var(--font-ui);font-size:.82rem;font-weight:700;
+  letter-spacing:.1em;text-transform:uppercase;color:#fff;margin-bottom:10px;
+}
+.step-desc{font-size:.82rem;line-height:1.7;color:var(--silver-dim)}
+
+/* ===========================
+   TESTIMONIALS
+=========================== */
+#testimonials{
+  padding:120px 0;
+  background:linear-gradient(180deg,transparent,rgba(74,14,143,0.08),transparent);
+}
+.testimonial-slider{margin-top:70px;position:relative;overflow:hidden}
+.testimonial-track{
+  display:flex;transition:transform .6s ease;
+}
+.testimonial-card{
+  min-width:calc(33.333% - 14px);margin-right:20px;
+  background:var(--glass);border:1px solid var(--glass-border);
+  backdrop-filter:blur(12px);padding:40px 36px;
+  position:relative;flex-shrink:0;
+}
+.testimonial-card::before{
+  content:'"';
+  position:absolute;top:20px;right:28px;
+  font-family:var(--font-display);font-size:6rem;line-height:1;
+  color:rgba(201,162,39,0.12);font-weight:600;
+}
+.stars{display:flex;gap:4px;margin-bottom:20px}
+.stars i{color:var(--gold);font-size:.85rem}
+.testimonial-text{
+  font-family:var(--font-display);font-size:1.05rem;
+  font-style:italic;font-weight:300;line-height:1.8;
+  color:var(--silver);margin-bottom:28px;
+}
+.testimonial-author{display:flex;align-items:center;gap:14px}
+.author-avatar{
+  width:44px;height:44px;border-radius:50%;
+  background:linear-gradient(135deg,var(--purple),var(--gold-dim));
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--font-ui);font-size:.85rem;font-weight:700;color:#fff;
+  flex-shrink:0;
+}
+.author-name{
+  font-family:var(--font-ui);font-size:.85rem;font-weight:700;
+  color:#fff;letter-spacing:.04em;
+}
+.author-title{font-size:.78rem;color:var(--silver-dim)}
+.slider-controls{
+  display:flex;align-items:center;justify-content:center;gap:12px;margin-top:40px;
+}
+.slider-btn{
+  width:44px;height:44px;border:1px solid rgba(201,162,39,0.3);
+  background:transparent;color:var(--gold);cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:all .3s;
+}
+.slider-btn:hover{background:rgba(201,162,39,0.1);border-color:var(--gold)}
+.slider-dots{display:flex;gap:8px;align-items:center}
+.slider-dot{
+  width:6px;height:6px;border-radius:50%;background:var(--silver-dim);
+  cursor:pointer;transition:all .3s;
+}
+.slider-dot.active{width:20px;border-radius:3px;background:var(--gold)}
+
+/* ===========================
+   PRICING
+=========================== */
+#pricing{padding:120px 0}
+.pricing-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:24px;
+  margin-top:70px;
+}
+.pricing-card{
+  background:var(--glass);border:1px solid var(--glass-border);
+  backdrop-filter:blur(12px);padding:48px 36px;
+  position:relative;overflow:hidden;transition:all .4s;
+}
+.pricing-card.featured{
+  border-color:var(--gold);
+  background:linear-gradient(180deg,rgba(201,162,39,0.08),rgba(74,14,143,0.1));
+}
+.pricing-card.featured::before{
+  content:'MOST POPULAR';
+  position:absolute;top:20px;right:-30px;
+  font-family:var(--font-ui);font-size:.6rem;font-weight:700;
+  letter-spacing:.2em;padding:6px 40px;
+  background:var(--gold);color:var(--black);
+  transform:rotate(45deg);
+}
+.pricing-card:hover{transform:translateY(-8px);box-shadow:0 20px 60px rgba(74,14,143,0.3)}
+.pricing-plan{
+  font-family:var(--font-ui);font-size:.72rem;font-weight:700;
+  letter-spacing:.25em;text-transform:uppercase;color:var(--gold);
+  margin-bottom:20px;
+}
+.pricing-price{
+  font-family:var(--font-display);font-size:3.5rem;font-weight:600;
+  color:#fff;line-height:1;margin-bottom:8px;
+}
+.pricing-price span{font-size:1.4rem;font-weight:300;vertical-align:top;margin-top:10px;display:inline-block}
+.pricing-period{font-size:.82rem;color:var(--silver-dim);margin-bottom:32px}
+.pricing-features{list-style:none;margin-bottom:36px}
+.pricing-features li{
+  display:flex;align-items:center;gap:10px;
+  font-size:.88rem;color:var(--silver);padding:9px 0;
+  border-bottom:1px solid rgba(255,255,255,0.05);
+}
+.pricing-features li i{color:var(--gold);font-size:.8rem;flex-shrink:0}
+.pricing-features li.disabled{color:var(--silver-dim)}
+.pricing-features li.disabled i{color:rgba(255,255,255,0.2)}
+
+/* ===========================
+   TEAM
+=========================== */
+#team{
+  padding:120px 0;
+  background:linear-gradient(180deg,transparent,rgba(26,5,51,0.2),transparent);
+}
+.team-grid{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:24px;margin-top:70px;
+}
+.team-card{
+  background:var(--glass);border:1px solid var(--glass-border);
+  backdrop-filter:blur(12px);overflow:hidden;cursor:pointer;
+  transition:all .4s;
+}
+.team-card:hover{transform:translateY(-6px);border-color:rgba(201,162,39,0.3)}
+.team-photo{
+  height:220px;
+  background:linear-gradient(135deg,var(--purple-deep),var(--purple-mid));
+  display:flex;align-items:center;justify-content:center;
+  font-size:4rem;color:rgba(201,162,39,0.3);position:relative;overflow:hidden;
+}
+.team-photo::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(to bottom,transparent 60%,rgba(5,5,8,.8));
+}
+.team-info{padding:24px}
+.team-name{
+  font-family:var(--font-ui);font-size:.95rem;font-weight:700;
+  color:#fff;margin-bottom:4px;
+}
+.team-role{font-size:.8rem;color:var(--gold);margin-bottom:14px}
+.team-socials{display:flex;gap:10px}
+.team-socials a{
+  width:30px;height:30px;border:1px solid rgba(201,162,39,0.2);
+  display:flex;align-items:center;justify-content:center;
+  color:var(--silver-dim);font-size:.75rem;text-decoration:none;
+  transition:all .3s;
+}
+.team-socials a:hover{border-color:var(--gold);color:var(--gold);background:rgba(201,162,39,0.08)}
+
+/* ===========================
+   FAQ
+=========================== */
+#faq{padding:120px 0}
+.faq-list{margin-top:70px;max-width:760px;margin-left:auto;margin-right:auto}
+.faq-item{
+  border-bottom:1px solid rgba(201,162,39,0.1);
+  overflow:hidden;
+}
+.faq-question{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:24px 0;cursor:pointer;gap:20px;
+  font-family:var(--font-ui);font-size:.92rem;font-weight:600;
+  color:#fff;letter-spacing:.02em;transition:color .3s;
+  background:none;border:none;width:100%;text-align:left;
+}
+.faq-question:hover{color:var(--gold)}
+.faq-icon{
+  width:28px;height:28px;flex-shrink:0;
+  border:1px solid rgba(201,162,39,0.3);
+  display:flex;align-items:center;justify-content:center;
+  color:var(--gold);font-size:.7rem;transition:transform .3s;
+}
+.faq-item.open .faq-icon{transform:rotate(45deg)}
+.faq-answer{
+  max-height:0;overflow:hidden;transition:max-height .4s ease;
+}
+.faq-item.open .faq-answer{max-height:200px}
+.faq-answer p{
+  padding:0 0 24px;font-size:.88rem;line-height:1.8;color:var(--silver-dim);
+}
+
+/* ===========================
+   CONTACT
+=========================== */
+#contact{
+  padding:120px 0;
+  background:linear-gradient(180deg,transparent,rgba(74,14,143,0.1),transparent);
+}
+.contact-grid{
+  display:grid;grid-template-columns:1fr 1.4fr;gap:80px;margin-top:70px;
+  align-items:start;
+}
+.contact-info h3{
+  font-family:var(--font-display);font-size:2rem;font-style:italic;
+  font-weight:600;color:#fff;margin-bottom:20px;
+}
+.contact-info p{font-size:.9rem;line-height:1.8;color:var(--silver-dim);margin-bottom:40px}
+.contact-items{display:flex;flex-direction:column;gap:20px}
+.contact-item{
+  display:flex;align-items:flex-start;gap:16px;
+  padding:20px 24px;background:var(--glass);
+  border:1px solid var(--glass-border);
+}
+.contact-item-icon{
+  width:40px;height:40px;flex-shrink:0;
+  background:rgba(201,162,39,0.1);border:1px solid rgba(201,162,39,0.2);
+  display:flex;align-items:center;justify-content:center;
+  color:var(--gold);font-size:.95rem;
+}
+.contact-item-label{
+  font-family:var(--font-ui);font-size:.68rem;font-weight:700;
+  letter-spacing:.18em;text-transform:uppercase;color:var(--gold);margin-bottom:4px;
+}
+.contact-item-value{font-size:.88rem;color:var(--silver)}
+.contact-form{background:var(--glass);border:1px solid var(--glass-border);backdrop-filter:blur(12px);padding:48px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.form-group{margin-bottom:20px}
+.form-group label{
+  display:block;font-family:var(--font-ui);font-size:.7rem;font-weight:700;
+  letter-spacing:.18em;text-transform:uppercase;color:var(--silver-dim);margin-bottom:8px;
+}
+.form-group input,.form-group textarea,.form-group select{
+  width:100%;padding:14px 18px;background:rgba(255,255,255,0.03);
+  border:1px solid rgba(201,162,39,0.15);color:#fff;font-family:var(--font-body);
+  font-size:.88rem;outline:none;transition:border-color .3s;
+  border-radius:1px;appearance:none;
+}
+.form-group select option{background:var(--black-2)}
+.form-group input:focus,.form-group textarea:focus,.form-group select:focus{
+  border-color:rgba(201,162,39,0.5);
+  box-shadow:0 0 0 3px rgba(201,162,39,0.06);
+}
+.form-group textarea{resize:vertical;min-height:120px}
+.form-group input::placeholder,.form-group textarea::placeholder{color:rgba(255,255,255,0.2)}
+
+/* ===========================
+   NEWSLETTER
+=========================== */
+#newsletter{
+  padding:80px 0;
+  border-top:1px solid rgba(201,162,39,0.08);
+  border-bottom:1px solid rgba(201,162,39,0.08);
+}
+.newsletter-inner{
+  display:flex;align-items:center;justify-content:space-between;gap:40px;flex-wrap:wrap;
+}
+.newsletter-text h3{
+  font-family:var(--font-display);font-size:2rem;font-weight:300;color:#fff;
+}
+.newsletter-text h3 span{font-style:italic;color:var(--gold-light)}
+.newsletter-text p{font-size:.88rem;color:var(--silver-dim);margin-top:8px}
+.newsletter-form{display:flex;gap:0;flex:1;max-width:460px}
+.newsletter-form input{
+  flex:1;padding:14px 20px;background:rgba(255,255,255,0.04);
+  border:1px solid rgba(201,162,39,0.2);border-right:none;
+  color:#fff;font-family:var(--font-body);font-size:.88rem;outline:none;
+  transition:border-color .3s;
+}
+.newsletter-form input:focus{border-color:rgba(201,162,39,0.5)}
+.newsletter-form input::placeholder{color:rgba(255,255,255,0.2)}
+.newsletter-form button{
+  padding:14px 28px;background:var(--gold);color:var(--black);
+  border:none;cursor:pointer;font-family:var(--font-ui);font-size:.75rem;
+  font-weight:700;letter-spacing:.15em;text-transform:uppercase;
+  transition:background .3s;white-space:nowrap;
+}
+.newsletter-form button:hover{background:var(--gold-light)}
+
+/* ===========================
+   FOOTER
+=========================== */
+footer{
+  padding:80px 0 40px;
+  border-top:1px solid rgba(201,162,39,0.1);
+}
+.footer-grid{
+  display:grid;grid-template-columns:1.8fr 1fr 1fr 1fr;gap:60px;margin-bottom:60px;
+}
+.footer-brand .nav-logo{display:block;margin-bottom:16px;font-size:1.6rem}
+.footer-brand p{font-size:.88rem;line-height:1.75;color:var(--silver-dim);max-width:280px;margin-bottom:24px}
+.footer-socials{display:flex;gap:10px}
+.footer-socials a{
+  width:36px;height:36px;border:1px solid rgba(201,162,39,0.2);
+  display:flex;align-items:center;justify-content:center;
+  color:var(--silver-dim);text-decoration:none;font-size:.85rem;
+  transition:all .3s;
+}
+.footer-socials a:hover{border-color:var(--gold);color:var(--gold);background:rgba(201,162,39,0.06)}
+.footer-col h4{
+  font-family:var(--font-ui);font-size:.72rem;font-weight:700;
+  letter-spacing:.2em;text-transform:uppercase;color:var(--gold);
+  margin-bottom:20px;
+}
+.footer-col ul{list-style:none;display:flex;flex-direction:column;gap:10px}
+.footer-col ul li a{
+  font-size:.85rem;color:var(--silver-dim);text-decoration:none;
+  transition:color .3s;
+}
+.footer-col ul li a:hover{color:var(--gold)}
+.footer-bottom{
+  border-top:1px solid rgba(255,255,255,0.06);
+  padding-top:32px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;
+}
+.footer-bottom p{font-size:.8rem;color:var(--silver-dim)}
+
+/* ===========================
+   MODAL OVERLAY
+=========================== */
+.modal-overlay{
+  position:fixed;inset:0;background:rgba(5,5,8,.92);
+  backdrop-filter:blur(12px);z-index:10000;
+  display:flex;align-items:center;justify-content:center;
+  padding:20px;opacity:0;pointer-events:none;transition:opacity .4s;
+}
+.modal-overlay.open{opacity:1;pointer-events:all}
+.modal{
+  background:var(--black-2);border:1px solid var(--glass-border);
+  max-width:700px;width:100%;max-height:90vh;overflow-y:auto;
+  position:relative;transform:translateY(30px);
+  transition:transform .4s;
+}
+.modal-overlay.open .modal{transform:translateY(0)}
+.modal-header{
+  padding:32px 40px 24px;
+  border-bottom:1px solid rgba(201,162,39,0.1);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.modal-header h2{
+  font-family:var(--font-display);font-size:1.8rem;font-weight:600;
+  font-style:italic;color:#fff;
+}
+.modal-close{
+  width:36px;height:36px;border:1px solid rgba(255,255,255,0.1);
+  background:none;color:var(--silver-dim);font-size:1.1rem;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;transition:all .3s;
+}
+.modal-close:hover{border-color:var(--gold);color:var(--gold)}
+.modal-body{padding:32px 40px 40px}
+
+/* Multi-step form */
+.step-indicator{
+  display:flex;align-items:center;justify-content:center;gap:0;margin-bottom:36px;
+}
+.step-dot{
+  width:32px;height:32px;border-radius:50%;
+  border:1px solid rgba(201,162,39,0.3);
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--font-ui);font-size:.75rem;font-weight:700;color:var(--silver-dim);
+  transition:all .3s;
+}
+.step-dot.active{
+  background:var(--gold);color:var(--black);border-color:var(--gold);
+}
+.step-dot.done{
+  background:rgba(201,162,39,0.2);color:var(--gold);border-color:var(--gold);
+}
+.step-line{
+  flex:1;height:1px;background:rgba(201,162,39,0.15);max-width:50px;
+}
+.step-panel{display:none}
+.step-panel.active{display:block}
+.step-panel h3{
+  font-family:var(--font-display);font-size:1.3rem;font-style:italic;
+  color:#fff;margin-bottom:24px;
+}
+.form-nav{display:flex;justify-content:space-between;margin-top:28px;gap:12px}
+.type-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:10px;
+}
+.type-option{
+  border:1px solid rgba(201,162,39,0.2);padding:14px 12px;
+  text-align:center;cursor:pointer;transition:all .3s;
+  font-family:var(--font-ui);font-size:.75rem;font-weight:600;
+  letter-spacing:.06em;color:var(--silver-dim);
+  background:transparent;
+}
+.type-option:hover,.type-option.selected{
+  border-color:var(--gold);color:var(--gold);background:rgba(201,162,39,0.06);
+}
+.type-option i{display:block;font-size:1.4rem;margin-bottom:8px;color:var(--gold-dim)}
+
+/* Auth modal tabs */
+.auth-tabs{display:flex;gap:0;margin-bottom:32px;border-bottom:1px solid rgba(201,162,39,0.15)}
+.auth-tab{
+  flex:1;padding:14px;text-align:center;cursor:pointer;
+  font-family:var(--font-ui);font-size:.78rem;font-weight:700;
+  letter-spacing:.12em;text-transform:uppercase;
+  color:var(--silver-dim);background:none;border:none;
+  border-bottom:2px solid transparent;transition:all .3s;
+}
+.auth-tab.active{color:var(--gold);border-bottom-color:var(--gold)}
+
+/* ===========================
+   CHATBOT
+=========================== */
+#chatbot-toggle{
+  position:fixed;bottom:30px;right:30px;z-index:5000;
+  width:56px;height:56px;border-radius:50%;
+  background:linear-gradient(135deg,var(--purple),var(--gold-dim));
+  border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;
+  color:#fff;font-size:1.3rem;
+  box-shadow:0 8px 30px rgba(74,14,143,0.5);
+  transition:transform .3s;
+}
+#chatbot-toggle:hover{transform:scale(1.1)}
+#chatbot-window{
+  position:fixed;bottom:100px;right:30px;z-index:5000;
+  width:330px;background:var(--black-2);
+  border:1px solid var(--glass-border);
+  transform:translateY(20px) scale(.95);opacity:0;
+  pointer-events:none;transition:all .3s;
+  display:flex;flex-direction:column;
+}
+#chatbot-window.open{transform:translateY(0) scale(1);opacity:1;pointer-events:all}
+.chat-header{
+  padding:16px 20px;background:linear-gradient(135deg,var(--purple-deep),var(--purple-mid));
+  border-bottom:1px solid rgba(201,162,39,0.15);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.chat-header-info{display:flex;align-items:center;gap:10px}
+.chat-avatar{
+  width:32px;height:32px;border-radius:50%;
+  background:linear-gradient(135deg,var(--gold-dim),var(--gold));
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--font-ui);font-size:.7rem;font-weight:700;color:var(--black);
+}
+.chat-name{font-family:var(--font-ui);font-size:.82rem;font-weight:700;color:#fff}
+.chat-status{font-size:.72rem;color:var(--gold)}
+.chat-close{background:none;border:none;color:var(--silver-dim);cursor:pointer;font-size:1rem}
+.chat-messages{
+  height:250px;overflow-y:auto;padding:16px;
+  display:flex;flex-direction:column;gap:12px;
+}
+.chat-msg{max-width:85%;font-size:.82rem;line-height:1.6;padding:10px 14px;border-radius:2px}
+.chat-msg.bot{
+  background:rgba(255,255,255,0.05);color:var(--silver);align-self:flex-start;
+  border-left:2px solid var(--gold-dim);
+}
+.chat-msg.user{
+  background:rgba(201,162,39,0.12);color:#fff;align-self:flex-end;
+  border-right:2px solid var(--gold);text-align:right;
+}
+.chat-input-area{
+  display:flex;padding:12px;border-top:1px solid rgba(201,162,39,0.1);gap:8px;
+}
+.chat-input-area input{
+  flex:1;padding:10px 14px;background:rgba(255,255,255,0.04);
+  border:1px solid rgba(201,162,39,0.15);color:#fff;font-size:.82rem;
+  outline:none;font-family:var(--font-body);transition:border-color .3s;
+}
+.chat-input-area input:focus{border-color:rgba(201,162,39,0.4)}
+.chat-input-area button{
+  padding:10px 14px;background:var(--gold);color:var(--black);
+  border:none;cursor:pointer;font-size:.85rem;transition:background .3s;
+}
+.chat-input-area button:hover{background:var(--gold-light)}
+
+/* ===========================
+   BLOG PREVIEW
+=========================== */
+#blog{padding:120px 0}
+.blog-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:70px;
+}
+.blog-card{
+  background:var(--glass);border:1px solid var(--glass-border);
+  backdrop-filter:blur(12px);overflow:hidden;
+  transition:all .4s;cursor:pointer;
+}
+.blog-card:hover{transform:translateY(-6px);border-color:rgba(201,162,39,0.25)}
+.blog-card-img{
+  height:180px;background:linear-gradient(135deg,var(--purple-deep),var(--purple-mid));
+  display:flex;align-items:center;justify-content:center;
+  font-size:2.5rem;opacity:.3;
+}
+.blog-card-body{padding:28px 24px}
+.blog-tag{
+  font-family:var(--font-ui);font-size:.65rem;font-weight:700;
+  letter-spacing:.18em;text-transform:uppercase;color:var(--gold);
+  border:1px solid rgba(201,162,39,0.3);padding:4px 10px;
+  display:inline-block;margin-bottom:14px;
+}
+.blog-card-body h3{
+  font-family:var(--font-display);font-size:1.25rem;font-weight:600;
+  color:#fff;line-height:1.35;margin-bottom:12px;
+  transition:color .3s;
+}
+.blog-card:hover .blog-card-body h3{color:var(--gold-light)}
+.blog-card-body p{font-size:.84rem;color:var(--silver-dim);line-height:1.75;margin-bottom:20px}
+.blog-meta{display:flex;align-items:center;justify-content:space-between}
+.blog-date{font-size:.78rem;color:var(--silver-dim)}
+.blog-read{
+  font-family:var(--font-ui);font-size:.7rem;font-weight:700;
+  letter-spacing:.12em;text-transform:uppercase;color:var(--gold);
+  text-decoration:none;
+}
+
+/* ===========================
+   SCROLL ANIMATIONS
+=========================== */
+.reveal{
+  opacity:0;transform:translateY(40px);
+  transition:all .7s ease;
+}
+.reveal.visible{opacity:1;transform:translateY(0)}
+.reveal-left{
+  opacity:0;transform:translateX(-40px);
+  transition:all .7s ease;
+}
+.reveal-left.visible{opacity:1;transform:translateX(0)}
+.reveal-right{
+  opacity:0;transform:translateX(40px);
+  transition:all .7s ease;
+}
+.reveal-right.visible{opacity:1;transform:translateX(0)}
+
+/* ===========================
+   RESPONSIVE
+=========================== */
+@media(max-width:1100px){
+  .container{padding:0 40px}
+  .portfolio-grid{grid-template-columns:repeat(2,1fr)}
+  .process-steps{grid-template-columns:repeat(3,1fr);gap:30px}
+  .process-steps::before{display:none}
+  .footer-grid{grid-template-columns:1fr 1fr;gap:40px}
+}
+@media(max-width:900px){
+  nav{padding:16px 30px}
+  nav.scrolled{padding:12px 30px}
+  .nav-links,.nav-cta{display:none}
+  .hamburger{display:flex}
+  .container{padding:0 24px}
+  .stats-grid{grid-template-columns:repeat(2,1fr)}
+  .stat-item:nth-child(2){border-right:none}
+  .stat-item:nth-child(3){border-right:1px solid rgba(201,162,39,0.1)}
+  .stat-item:nth-child(3),.stat-item:nth-child(4){border-top:1px solid rgba(201,162,39,0.1)}
+  .pricing-grid{grid-template-columns:1fr}
+  .team-grid{grid-template-columns:repeat(2,1fr)}
+  .contact-grid{grid-template-columns:1fr;gap:40px}
+  .footer-grid{grid-template-columns:1fr 1fr;gap:30px}
+  .newsletter-inner{flex-direction:column;align-items:flex-start}
+  .newsletter-form{max-width:100%;width:100%}
+  .testimonial-card{min-width:calc(100% - 20px)}
+}
+@media(max-width:640px){
+  .section-pad{padding:80px 0}
+  .hero-title{font-size:2.6rem}
+  .portfolio-grid{grid-template-columns:1fr}
+  .team-grid{grid-template-columns:1fr}
+  .blog-grid{grid-template-columns:1fr}
+  .pricing-grid{grid-template-columns:1fr}
+  .process-steps{grid-template-columns:1fr;gap:24px}
+  .modal-body{padding:24px}
+  .modal-header{padding:24px 24px 20px}
+  .form-row{grid-template-columns:1fr}
+  .type-grid{grid-template-columns:repeat(2,1fr)}
+  .contact-form{padding:28px 20px}
+  .footer-grid{grid-template-columns:1fr}
+}
+
+/* Mobile nav drawer */
+.mobile-nav{
+  position:fixed;inset:0;background:rgba(5,5,8,.98);
+  backdrop-filter:blur(20px);z-index:9999;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:32px;opacity:0;pointer-events:none;transition:opacity .4s;
+}
+.mobile-nav.open{opacity:1;pointer-events:all}
+.mobile-nav a{
+  font-family:var(--font-display);font-size:2rem;font-style:italic;
+  color:#fff;text-decoration:none;transition:color .3s;
+}
+.mobile-nav a:hover{color:var(--gold)}
+.mobile-nav-close{
+  position:absolute;top:24px;right:24px;
+  background:none;border:none;color:var(--silver-dim);font-size:1.5rem;cursor:pointer;
+}
+
+/* Glow text effect */
+.glow{text-shadow:0 0 40px rgba(201,162,39,0.3)}
+
+/* Section divider */
+.divider{
+  width:60px;height:1px;background:var(--gold-dim);margin:24px 0;
+}
+.intro{
+    position:fixed;
+    inset:0;
+    background:radial-gradient(circle at center,#14091f,#050505 70%);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    z-index:9999;
+    overflow:hidden;
+}
+
+.glow{
+    position:absolute;
+    width:500px;
+    height:500px;
+    background:radial-gradient(circle,rgba(162,89,255,0.25),transparent 70%);
+    filter:blur(50px);
+    animation:pulse 4s infinite ease-in-out;
+}
+
+.logo-container{
+    position:relative;
+    display:flex;
+    align-items:center;
+    gap:18px;
+    transform:scale(0.5);
+    opacity:0;
+    animation:introAnimation 3s forwards ease;
+}
+
+.vs-logo{
+    width:95px;
+    height:95px;
+    border-radius:24px;
+    background:linear-gradient(135deg,#c8a96b,#ffffff,#8a42ff);
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    color:#050505;
+    font-size:2.5rem;
+    font-weight:800;
+    letter-spacing:2px;
+
+    box-shadow:
+        0 0 25px rgba(200,169,107,0.35),
+        0 0 60px rgba(138,66,255,0.25);
+
+    animation:logoFloat 3s infinite ease-in-out;
+}
+
+.brand-name{
+    font-size:4rem;
+    font-weight:700;
+
+    background:linear-gradient(90deg,#ffffff,#c8a96b,#8a42ff);
+
+    background-clip:text;
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+
+    opacity:0;
+    transform:translateX(-40px);
+
+    animation:textReveal 2s forwards ease;
+    animation-delay:1.2s;
+
+    letter-spacing:2px;
+}
+
+
+
+.fade-out{
+    animation:fadeOut 1.2s forwards ease;
+}
+
+@keyframes introAnimation{
+
+    0%{
+        transform:scale(0.4);
+        opacity:0;
+    }
+
+    100%{
+        transform:scale(1);
+        opacity:1;
+    }
+}
+
+@keyframes textReveal{
+
+    0%{
+        opacity:0;
+        transform:translateX(-40px);
+    }
+
+    100%{
+        opacity:1;
+        transform:translateX(0);
+    }
+}
+
+@keyframes pulse{
+
+    0%,100%{
+        transform:scale(1);
+        opacity:0.5;
+    }
+
+    50%{
+        transform:scale(1.2);
+        opacity:0.9;
+    }
+}
+
+@keyframes logoFloat{
+
+    0%,100%{
+        transform:translateY(0px);
+    }
+
+    50%{
+        transform:translateY(-10px);
+    }
+}
+
+@keyframes showMiniLogo{
+
+    from{
+        opacity:0;
+        transform:translateY(-20px);
+    }
+
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+}
+
+@keyframes fadeOut{
+
+    from{
+        opacity:1;
+    }
+
+    to{
+        opacity:0;
+        visibility:hidden;
+    }
+}
+
+.bottom-logo{
+
+    position:fixed;
+
+    bottom:20px;
+    left:20px;
+
+    width:55px;
+    height:55px;
+
+    border-radius:16px;
+
+    background:
+    linear-gradient(
+        135deg,
+        #c8a96b,
+        #ffffff,
+        #8a42ff
+    );
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    color:#111;
+
+    font-size:1.3rem;
+    font-weight:900;
+
+    letter-spacing:1px;
+
+    z-index:9999;
+
+    box-shadow:
+        0 0 15px rgba(200,169,107,0.35),
+        0 0 40px rgba(138,66,255,0.25);
+}
+</style>
+</head>
+<body>
+<div class="intro" id="intro">
+
+    <div class="glow"></div>
+
+    <div class="logo-container">
+
+        <div class="vs-logo">
+            VS
+        </div>
+
+        <div class="brand-name">
+            VisionStack
+        </div>
+
+    </div>
+
+</div>
+
+<div class="bottom-logo">
+    VS
+</div>
+<!-- LOADER -->
+<div id="loader">
+  <div class="loader-logo">VISIONSTACK</div>
+  <div class="loader-bar"><div class="loader-fill"></div></div>
+</div>
+
+<!-- CURSOR -->
+<div id="cursor"></div>
+<div id="cursor-trail"></div>
+
+<!-- PARTICLES -->
+<canvas id="particles-canvas"></canvas>
+
+<!-- MOBILE NAV -->
+<div class="mobile-nav" id="mobileNav">
+  <button class="mobile-nav-close" onclick="closeMobileNav()"><i class="fas fa-times"></i></button>
+  <a href="#hero" onclick="closeMobileNav()">Home</a>
+  <a href="#services" onclick="closeMobileNav()">Services</a>
+  <a href="#portfolio" onclick="closeMobileNav()">Portfolio</a>
+  <a href="#pricing" onclick="closeMobileNav()">Pricing</a>
+  <a href="#team" onclick="closeMobileNav()">Team</a>
+  <a href="#contact" onclick="closeMobileNav()">Contact</a>
+</div>
+
+<!-- NAVBAR -->
+<nav id="navbar">
+  <a href="#hero" class="nav-logo">VISIONSTACK</a>
+  <ul class="nav-links">
+    <li><a href="#services">Services</a></li>
+    <li><a href="#portfolio">Portfolio</a></li>
+    <li><a href="#process">Process</a></li>
+    <li><a href="#pricing">Pricing</a></li>
+    <li><a href="#team">Team</a></li>
+    <li><a href="#blog">Blog</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <a href="#" class="nav-cta" onclick="openAuthModal(event)">Client Login</a>
+  <button class="hamburger" onclick="openMobileNav()" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- ========================
+     HERO
+========================= -->
+<section id="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+  <div class="hero-content">
+    <div class="hero-badge">
+      <span>Premium Digital Agency</span>
+    </div>
+    <h1 class="hero-title">
+      We Build Websites That<br><span class="accent">Build Your Brand.</span>
+    </h1>
+    <div class="hero-typewriter">
+      <span id="typewriter-text"></span><span class="cursor-blink"></span>
+    </div>
+    <div class="hero-actions">
+      <a href="#" class="btn-primary" onclick="openRequestModal(event)"><span>Get Started</span></a>
+      <a href="#portfolio" class="btn-secondary">View Portfolio</a>
+    </div>
+  </div>
+  <div class="hero-scroll-indicator">
+    <div class="scroll-line"></div>
+  </div>
+</section>
+
+<!-- STATS -->
+<section id="stats">
+  <div class="container">
+    <div class="stats-grid">
+      <div class="stat-item reveal">
+        <span class="stat-num" data-target="250">0</span>
+        <span class="stat-label">Projects Delivered</span>
+      </div>
+      <div class="stat-item reveal">
+        <span class="stat-num" data-target="98">0</span>
+        <span class="stat-label">Client Satisfaction %</span>
+      </div>
+      <div class="stat-item reveal">
+        <span class="stat-num" data-target="8">0</span>
+        <span class="stat-label">Years of Excellence</span>
+      </div>
+      <div class="stat-item reveal">
+        <span class="stat-num" data-target="40">0</span>
+        <span class="stat-label">Expert Team Members</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section id="services" class="section-pad">
+  <div class="container">
+    <div class="reveal">
+      <div class="section-label">What We Do</div>
+      <h2 class="section-title">Crafting <span class="italic">Digital Excellence</span></h2>
+      <p class="section-sub">From concept to deployment, we engineer digital experiences that captivate, convert, and endure.</p>
+    </div>
+    <div class="services-grid">
+      <div class="service-card reveal">
+        <div class="service-icon"><i class="fas fa-code"></i></div>
+        <h3>Full Stack Development</h3>
+        <p>End-to-end web solutions engineered with precision — from scalable backends to pixel-perfect frontends.</p>
+        <a href="#contact" class="learn-more">Explore <i class="fas fa-arrow-right"></i></a>
+      </div>
+      <div class="service-card reveal">
+        <div class="service-icon"><i class="fas fa-palette"></i></div>
+        <h3>UI/UX Design</h3>
+        <p>Immersive interfaces that blend aesthetics with psychology — creating experiences users remember and return to.</p>
+        <a href="#contact" class="learn-more">Explore <i class="fas fa-arrow-right"></i></a>
+      </div>
+      <div class="service-card reveal">
+        <div class="service-icon"><i class="fas fa-shopping-bag"></i></div>
+        <h3>E-commerce Websites</h3>
+        <p>High-converting online stores with seamless checkout flows, payment integrations, and inventory systems.</p>
+        <a href="#contact" class="learn-more">Explore <i class="fas fa-arrow-right"></i></a>
+      </div>
+      <div class="service-card reveal">
+        <div class="service-icon"><i class="fas fa-robot"></i></div>
+        <h3>AI-Integrated Websites</h3>
+        <p>Next-generation sites powered by artificial intelligence — chatbots, recommendations, and smart automation.</p>
+        <a href="#contact" class="learn-more">Explore <i class="fas fa-arrow-right"></i></a>
+      </div>
+      <div class="service-card reveal">
+        <div class="service-icon"><i class="fas fa-briefcase"></i></div>
+        <h3>Portfolio Websites</h3>
+        <p>Striking personal and agency portfolios that tell your story with elegance and magnetic visual appeal.</p>
+        <a href="#contact" class="learn-more">Explore <i class="fas fa-arrow-right"></i></a>
+      </div>
+      <div class="service-card reveal">
+        <div class="service-icon"><i class="fas fa-server"></i></div>
+        <h3>Backend Development</h3>
+        <p>Robust APIs, databases, and server architectures built to scale with your growth without compromise.</p>
+        <a href="#contact" class="learn-more">Explore <i class="fas fa-arrow-right"></i></a>
+      </div>
+      <div class="service-card reveal">
+        <div class="service-icon"><i class="fas fa-layer-group"></i></div>
+        <h3>Frontend Development</h3>
+        <p>Silky-smooth interfaces with micro-animations, responsive layouts, and blazing performance scores.</p>
+        <a href="#contact" class="learn-more">Explore <i class="fas fa-arrow-right"></i></a>
+      </div>
+      <div class="service-card reveal">
+        <div class="service-icon"><i class="fas fa-pen-nib"></i></div>
+        <h3>Business Websites</h3>
+        <p>Authority-building corporate sites that establish trust, communicate value, and drive qualified leads.</p>
+        <a href="#contact" class="learn-more">Explore <i class="fas fa-arrow-right"></i></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PORTFOLIO -->
+<section id="portfolio">
+  <div class="container">
+    <div class="reveal">
+      <div class="section-label">Our Work</div>
+      <h2 class="section-title">Selected <span class="italic">Portfolio</span></h2>
+      <p class="section-sub">A curated showcase of transformative digital projects across industries.</p>
+    </div>
+    <div class="portfolio-filters reveal">
+      <button class="filter-btn active" data-filter="all">All Projects</button>
+      <button class="filter-btn" data-filter="ecommerce">E-commerce</button>
+      <button class="filter-btn" data-filter="portfolio">Portfolio</button>
+      <button class="filter-btn" data-filter="ai">AI Powered</button>
+      <button class="filter-btn" data-filter="business">Business</button>
+    </div>
+    <div class="portfolio-grid">
+      <div class="portfolio-card reveal" data-cat="ecommerce">
+        <div class="portfolio-card-bg pc-1 portfolio-placeholder"><i class="fas fa-shopping-cart"></i></div>
+        <div class="portfolio-overlay">
+          <h3>LuxeCart Platform</h3>
+          <p>Premium E-commerce · React + Node.js</p>
+          <a href="#" onclick="return false"><i class="fas fa-external-link-alt"></i> Live Preview</a>
+        </div>
+      </div>
+      <div class="portfolio-card reveal" data-cat="ai">
+        <div class="portfolio-card-bg pc-2 portfolio-placeholder"><i class="fas fa-brain"></i></div>
+        <div class="portfolio-overlay">
+          <h3>Nexus AI Dashboard</h3>
+          <p>AI Analytics · Python + React</p>
+          <a href="#" onclick="return false"><i class="fas fa-external-link-alt"></i> Live Preview</a>
+        </div>
+      </div>
+      <div class="portfolio-card reveal" data-cat="portfolio">
+        <div class="portfolio-card-bg pc-3 portfolio-placeholder"><i class="fas fa-user-circle"></i></div>
+        <div class="portfolio-overlay">
+          <h3>Artura Portfolio</h3>
+          <p>Creative Agency · Three.js + GSAP</p>
+          <a href="#" onclick="return false"><i class="fas fa-external-link-alt"></i> Live Preview</a>
+        </div>
+      </div>
+      <div class="portfolio-card reveal" data-cat="business">
+        <div class="portfolio-card-bg pc-4 portfolio-placeholder"><i class="fas fa-building"></i></div>
+        <div class="portfolio-overlay">
+          <h3>Goldstone Corp</h3>
+          <p>Corporate Website · Full Stack</p>
+          <a href="#" onclick="return false"><i class="fas fa-external-link-alt"></i> Live Preview</a>
+        </div>
+      </div>
+      <div class="portfolio-card reveal" data-cat="ecommerce">
+        <div class="portfolio-card-bg pc-5 portfolio-placeholder"><i class="fas fa-tshirt"></i></div>
+        <div class="portfolio-overlay">
+          <h3>ThreadVault Fashion</h3>
+          <p>Fashion E-commerce · Next.js</p>
+          <a href="#" onclick="return false"><i class="fas fa-external-link-alt"></i> Live Preview</a>
+        </div>
+      </div>
+      <div class="portfolio-card reveal" data-cat="ai">
+        <div class="portfolio-card-bg pc-6 portfolio-placeholder"><i class="fas fa-comments"></i></div>
+        <div class="portfolio-overlay">
+          <h3>VeraChat Platform</h3>
+          <p>AI Chatbot SaaS · FastAPI + Vue</p>
+          <a href="#" onclick="return false"><i class="fas fa-external-link-alt"></i> Live Preview</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROCESS -->
+<section id="process" class="section-pad">
+  <div class="container">
+    <div class="reveal" style="text-align:center;margin-bottom:0">
+      <div class="section-label" style="justify-content:center">How We Work</div>
+      <h2 class="section-title">Our <span class="italic">Creative Process</span></h2>
+    </div>
+    <div class="process-steps">
+      <div class="process-step">
+        <div class="step-number">01</div>
+        <div class="step-title">Discovery</div>
+        <div class="step-desc">Deep-dive consultation to understand your vision, goals, and competitive landscape.</div>
+      </div>
+      <div class="process-step">
+        <div class="step-number">02</div>
+        <div class="step-title">Strategy</div>
+        <div class="step-desc">Crafting the blueprint — architecture, design direction, and tech stack selection.</div>
+      </div>
+      <div class="process-step">
+        <div class="step-number">03</div>
+        <div class="step-title">Design</div>
+        <div class="step-desc">High-fidelity mockups with full interaction design before a single line of code.</div>
+      </div>
+      <div class="process-step">
+        <div class="step-number">04</div>
+        <div class="step-title">Development</div>
+        <div class="step-desc">Agile engineering sprints with weekly demos and your continuous feedback loop.</div>
+      </div>
+      <div class="process-step">
+        <div class="step-number">05</div>
+        <div class="step-title">Launch</div>
+        <div class="step-desc">Rigorous QA, performance optimization, deployment, and post-launch monitoring.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section id="testimonials">
+  <div class="container">
+    <div class="reveal">
+      <div class="section-label">Client Stories</div>
+      <h2 class="section-title">Words of <span class="italic">Trust</span></h2>
+    </div>
+    <div class="testimonial-slider reveal">
+      <div class="testimonial-track" id="testimonialTrack">
+        <div class="testimonial-card">
+          <div class="stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+          <p class="testimonial-text">"VisionStack transformed our online presence completely. The site they built generated a 340% increase in leads within the first month. Truly exceptional craftsmanship."</p>
+          <div class="testimonial-author">
+            <div class="author-avatar">AM</div>
+            <div><div class="author-name">Alexandra Mills</div><div class="author-title">CEO, Novara Ventures</div></div>
+          </div>
+        </div>
+        <div class="testimonial-card">
+          <div class="stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+          <p class="testimonial-text">"The attention to detail is extraordinary. Every pixel, every animation, every interaction was thoughtfully crafted. Our e-commerce conversion rate doubled."</p>
+          <div class="testimonial-author">
+            <div class="author-avatar">RK</div>
+            <div><div class="author-name">Rohan Kapoor</div><div class="author-title">Founder, ThreadVault</div></div>
+          </div>
+        </div>
+        <div class="testimonial-card">
+          <div class="stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+          <p class="testimonial-text">"Working with VisionStack felt like partnering with a team that genuinely cared. The AI integration they built has saved us 20 hours weekly in support."</p>
+          <div class="testimonial-author">
+            <div class="author-avatar">SL</div>
+            <div><div class="author-name">Sophie Laurent</div><div class="author-title">CTO, NexusFlow</div></div>
+          </div>
+        </div>
+        <div class="testimonial-card">
+          <div class="stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+          <p class="testimonial-text">"Delivered 2 weeks ahead of schedule, exceeded every expectation, and the ongoing support has been phenomenal. Our new site is the best investment we've made."</p>
+          <div class="testimonial-author">
+            <div class="author-avatar">JT</div>
+            <div><div class="author-name">James Thornton</div><div class="author-title">Director, Goldstone Corp</div></div>
+          </div>
+        </div>
+        <div class="testimonial-card">
+          <div class="stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+          <p class="testimonial-text">"I came with a vague idea and they returned a vision I couldn't have imagined. The portfolio they built has landed me three major clients already."</p>
+          <div class="testimonial-author">
+            <div class="author-avatar">MR</div>
+            <div><div class="author-name">Maya Rivera</div><div class="author-title">Creative Director, Artura</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="slider-controls">
+        <button class="slider-btn" id="prevSlide"><i class="fas fa-chevron-left"></i></button>
+        <div class="slider-dots" id="sliderDots"></div>
+        <button class="slider-btn" id="nextSlide"><i class="fas fa-chevron-right"></i></button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section id="pricing" class="section-pad">
+  <div class="container">
+    <div class="reveal" style="text-align:center;margin-bottom:0">
+      <div class="section-label" style="justify-content:center">Investment</div>
+      <h2 class="section-title">Transparent <span class="italic">Pricing</span></h2>
+      <p class="section-sub" style="margin:0 auto 70px">No hidden fees. No surprises. Just honest pricing for exceptional work.</p>
+    </div>
+    <div class="pricing-grid">
+      <div class="pricing-card reveal">
+        <div class="pricing-plan">Starter</div>
+        <div class="pricing-price"><span>$</span>999</div>
+        <div class="pricing-period">one-time payment</div>
+        <ul class="pricing-features">
+          <li><i class="fas fa-check"></i> Up to 5 Pages</li>
+          <li><i class="fas fa-check"></i> Responsive Design</li>
+          <li><i class="fas fa-check"></i> Contact Form</li>
+          <li><i class="fas fa-check"></i> Basic SEO Setup</li>
+          <li><i class="fas fa-check"></i> 30-Day Support</li>
+          <li class="disabled"><i class="fas fa-times"></i> Custom Animations</li>
+          <li class="disabled"><i class="fas fa-times"></i> CMS Integration</li>
+          <li class="disabled"><i class="fas fa-times"></i> E-commerce</li>
+        </ul>
+        <a href="#" class="btn-secondary" style="width:100%;text-align:center;display:block;padding:14px" onclick="openRequestModal(event)">Get Started</a>
+      </div>
+      <div class="pricing-card featured reveal">
+        <div class="pricing-plan">Professional</div>
+        <div class="pricing-price"><span>$</span>1,599</div>
+        <div class="pricing-period">one-time payment</div>
+        <ul class="pricing-features">
+          <li><i class="fas fa-check"></i> Up to 15 Pages</li>
+          <li><i class="fas fa-check"></i> Premium Animations</li>
+          <li><i class="fas fa-check"></i> CMS Integration</li>
+          <li><i class="fas fa-check"></i> Advanced SEO</li>
+          <li><i class="fas fa-check"></i> 90-Day Support</li>
+          <li><i class="fas fa-check"></i> User Authentication</li>
+          <li><i class="fas fa-check"></i> Performance Optimization</li>
+          <li class="disabled"><i class="fas fa-times"></i> AI Integration</li>
+        </ul>
+        <a href="#" class="btn-primary" style="width:100%;text-align:center;display:block;padding:14px" onclick="openRequestModal(event)"><span>Get Started</span></a>
+      </div>
+      <div class="pricing-card reveal">
+        <div class="pricing-plan">Enterprise</div>
+        <div class="pricing-price"><span>$</span>2,000<small style="font-size:1rem;color:var(--silver-dim)">+</small></div>
+        <div class="pricing-period">custom quote</div>
+        <ul class="pricing-features">
+          <li><i class="fas fa-check"></i> Unlimited Pages</li>
+          <li><i class="fas fa-check"></i> Full E-commerce Suite</li>
+          <li><i class="fas fa-check"></i> AI Integration</li>
+          <li><i class="fas fa-check"></i> Custom Animations</li>
+          <li><i class="fas fa-check"></i> 1-Year Support</li>
+          <li><i class="fas fa-check"></i> Dedicated Project Manager</li>
+          <li><i class="fas fa-check"></i> Priority Revisions</li>
+          <li><i class="fas fa-check"></i> Analytics Dashboard</li>
+        </ul>
+        <a href="#contact" class="btn-secondary" style="width:100%;text-align:center;display:block;padding:14px">Contact Us</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TEAM -->
+<section id="team">
+  <div class="container">
+    <div class="reveal">
+      <div class="section-label">The Minds Behind</div>
+      <h2 class="section-title">Meet the <span class="italic">Team</span></h2>
+      <p class="section-sub">A collective of visionaries, engineers, and designers united by a passion for digital excellence.</p>
+    </div>
+    <div class="team-grid">
+      <div class="team-card reveal">
+        <div class="team-photo"><i class="fas fa-user"></i></div>
+        <div class="team-info">
+          <div class="team-name">Nishtha Chaturvedi</div>
+          <div class="team-role">Founder & Lead Developer</div>
+          <div class="team-socials">
+            <a href="#"><i class="fab fa-linkedin-in"></i></a>
+            <a href="#"><i class="fab fa-github"></i></a>
+            <a href="#"><i class="fab fa-twitter"></i></a>
+          </div>
+        </div>
+      </div>
+      <div class="team-card reveal">
+        <div class="team-photo" style="background:linear-gradient(135deg,#1a0533,#3a0a6a)"><i class="fas fa-user"></i></div>
+        <div class="team-info">
+          <div class="team-name">Priya Rai</div>
+          <div class="team-role">UI/UX Creative Director</div>
+          <div class="team-socials">
+            <a href="#"><i class="fab fa-behance"></i></a>
+            <a href="#"><i class="fab fa-dribbble"></i></a>
+            <a href="#"><i class="fab fa-linkedin-in"></i></a>
+          </div>
+        </div>
+      </div>
+      <div class="team-card reveal">
+        <div class="team-photo" style="background:linear-gradient(135deg,#050a1a,#0a1a35)"><i class="fas fa-user"></i></div>
+        <div class="team-info">
+          <div class="team-name">Arjun</div>
+          <div class="team-role">Backend Architect</div>
+          <div class="team-socials">
+            <a href="#"><i class="fab fa-github"></i></a>
+            <a href="#"><i class="fab fa-linkedin-in"></i></a>
+            <a href="#"><i class="fab fa-stack-overflow"></i></a>
+          </div>
+        </div>
+      </div>
+      <div class="team-card reveal">
+        <div class="team-photo" style="background:linear-gradient(135deg,#1a0a05,#3a1800)"><i class="fas fa-user"></i></div>
+        <div class="team-info">
+          <div class="team-name">Aryan Pandey</div>
+          <div class="team-role">AI/ML Integration Lead</div>
+          <div class="team-socials">
+            <a href="#"><i class="fab fa-linkedin-in"></i></a>
+            <a href="#"><i class="fab fa-github"></i></a>
+            <a href="#"><i class="fab fa-twitter"></i></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq" class="section-pad">
+  <div class="container">
+    <div class="reveal" style="text-align:center">
+      <div class="section-label" style="justify-content:center">Got Questions?</div>
+      <h2 class="section-title">Frequently <span class="italic">Asked</span></h2>
+    </div>
+    <div class="faq-list">
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          How long does a typical project take?
+          <div class="faq-icon"><i class="fas fa-plus"></i></div>
+        </button>
+        <div class="faq-answer"><p>Project timelines vary based on complexity. A standard business website takes 2–4 weeks, while a full-stack e-commerce platform with custom features typically runs 6–12 weeks. We'll provide a precise timeline during our initial consultation after reviewing your requirements.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          Do you provide post-launch support?
+          <div class="faq-icon"><i class="fas fa-plus"></i></div>
+        </button>
+        <div class="faq-answer"><p>Absolutely. All packages include dedicated post-launch support ranging from 30 days (Starter) to 1 year (Enterprise). We offer maintenance retainers beyond the included period covering updates, security patches, and feature additions.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          What technologies do you specialize in?
+          <div class="faq-icon"><i class="fas fa-plus"></i></div>
+        </button>
+        <div class="faq-answer"><p>Our stack spans React, Next.js, Vue, and vanilla JS on the frontend; Node.js, Python (FastAPI/Django), and Go on the backend; PostgreSQL, MongoDB, and Redis for data — plus AWS, GCP, and Vercel for cloud infrastructure. We choose the best tool for your specific needs.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          Can I see the design before development starts?
+          <div class="faq-icon"><i class="fas fa-plus"></i></div>
+        </button>
+        <div class="faq-answer"><p>Yes — always. We deliver comprehensive Figma mockups including desktop, tablet, and mobile layouts with full interaction specifications before writing a single line of code. Development only begins once you've approved the design and requested any revisions.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          What is your payment structure?
+          <div class="faq-icon"><i class="fas fa-plus"></i></div>
+        </button>
+        <div class="faq-answer"><p>We typically work with a 40% upfront deposit, 30% at the design approval milestone, and the final 30% upon project delivery. For larger enterprise engagements, we can structure a monthly milestone-based payment schedule tailored to your budget flow.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BLOG -->
+<section id="blog">
+  <div class="container">
+    <div class="reveal">
+      <div class="section-label">Insights</div>
+      <h2 class="section-title">From the <span class="italic">Studio</span></h2>
+      <p class="section-sub">Thoughts, tutorials, and industry perspectives from our team of digital craftspeople.</p>
+    </div>
+    <div class="blog-grid">
+      <div class="blog-card reveal">
+        <div class="blog-card-img"><i class="fas fa-microchip"></i></div>
+        <div class="blog-card-body">
+          <span class="blog-tag">AI Integration</span>
+          <h3>How AI Is Reshaping Web Experiences in 2025</h3>
+          <p>From generative interfaces to predictive UX, artificial intelligence is no longer a feature — it's the foundation.</p>
+          <div class="blog-meta">
+            <span class="blog-date">May 2, 2025</span>
+            <a href="#" class="blog-read">Read More →</a>
+          </div>
+        </div>
+      </div>
+      <div class="blog-card reveal">
+        <div class="blog-card-img" style="background:linear-gradient(135deg,#1a0510,#2d0520)"><i class="fas fa-paint-brush"></i></div>
+        <div class="blog-card-body">
+          <span class="blog-tag">Design Trends</span>
+          <h3>Dark Luxury Aesthetics: The New Standard for Premium Brands</h3>
+          <p>Exploring the visual language of exclusivity and how leading agencies are crafting ultra-premium digital experiences.</p>
+          <div class="blog-meta">
+            <span class="blog-date">Apr 18, 2025</span>
+            <a href="#" class="blog-read">Read More →</a>
+          </div>
+        </div>
+      </div>
+      <div class="blog-card reveal">
+        <div class="blog-card-img" style="background:linear-gradient(135deg,#0a1a05,#1a3010)"><i class="fas fa-tachometer-alt"></i></div>
+        <div class="blog-card-body">
+          <span class="blog-tag">Performance</span>
+          <h3>Core Web Vitals Mastery: Scoring 100 on Google's Speed Test</h3>
+          <p>A deep technical guide to achieving perfect Lighthouse scores while maintaining visual richness and animation depth.</p>
+          <div class="blog-meta">
+            <span class="blog-date">Apr 5, 2025</span>
+            <a href="#" class="blog-read">Read More →</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact" class="section-pad">
+  <div class="container">
+    <div class="reveal">
+      <div class="section-label">Start Your Journey</div>
+      <h2 class="section-title">Let's Build Something <span class="italic">Extraordinary</span></h2>
+    </div>
+    <div class="contact-grid">
+      <div class="reveal-left">
+        <h3>Get in Touch</h3>
+        <p>Whether you have a clear vision or just a spark of an idea — we'd love to hear from you. Every great project begins with a conversation.</p>
+        <div class="contact-items">
+          <div class="contact-item">
+            <div class="contact-item-icon"><i class="fas fa-envelope"></i></div>
+            <div>
+              <div class="contact-item-label">Email</div>
+              <div class="contact-item-value">hello@visionstack.io</div>
+            </div>
+          </div>
+          <div class="contact-item">
+            <div class="contact-item-icon"><i class="fas fa-phone"></i></div>
+            <div>
+              <div class="contact-item-label">Phone</div>
+              <div class="contact-item-value">+91 98765 43210</div>
+            </div>
+          </div>
+          <div class="contact-item">
+            <div class="contact-item-icon"><i class="fas fa-map-marker-alt"></i></div>
+            <div>
+              <div class="contact-item-label">Office</div>
+              <div class="contact-item-value">Ludhiana, Punjab, India</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="contact-form reveal-right">
+        <div class="form-row">
+          <div class="form-group">
+            <label>Full Name</label>
+            <input id="contact-firstname" type="text" placeholder="John"/>
+            <input id="contact-lastname" type="text" placeholder="Smith"/>
+          </div>
+          <div class="form-group">
+            <label>Email Address</label>
+            <input id="contact-email" type="email" placeholder="john@company.com"/>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Subject</label>
+          <input type="text" placeholder="Tell us about your project..."/>
+        </div>
+        <div class="form-group">
+          <label>Message</label>
+          <textarea placeholder="Describe your vision, goals, and timeline..."></textarea>
+        </div>
+        <button class="btn-primary" style="width:100%" onclick="sendContactForm()"><span>Send Message <i class="fas fa-paper-plane" style="margin-left:8px"></i></span></button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- NEWSLETTER -->
+<section id="newsletter">
+  <div class="container">
+    <div class="newsletter-inner reveal">
+      <div class="newsletter-text">
+        <h3>Stay Ahead of the <span>Digital Curve</span></h3>
+        <p>Monthly insights on design trends, tech innovations, and agency stories.</p>
+      </div>
+      <div class="newsletter-form">
+        <input id="newsletter-email" type="email" placeholder="your@email.com">
+        <button onclick="subscribeNewsletter()">Subscribe</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a href="#hero" class="nav-logo">VISIONSTACK</a>
+        <p>We engineer digital experiences that captivate, convert, and endure. Premium web development for forward-thinking brands.</p>
+        <div class="footer-socials">
+          <a href="#"><i class="fab fa-twitter"></i></a>
+          <a href="#"><i class="fab fa-linkedin-in"></i></a>
+          <a href="#"><i class="fab fa-instagram"></i></a>
+          <a href="#"><i class="fab fa-github"></i></a>
+          <a href="#"><i class="fab fa-dribbble"></i></a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Services</h4>
+        <ul>
+          <li><a href="#">Full Stack Development</a></li>
+          <li><a href="#">UI/UX Design</a></li>
+          <li><a href="#">E-commerce Solutions</a></li>
+          <li><a href="#">AI Integration</a></li>
+          <li><a href="#">Portfolio Websites</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Company</h4>
+        <ul>
+          <li><a href="#">About VisionStack</a></li>
+          <li><a href="#">Our Process</a></li>
+          <li><a href="#portfolio">Portfolio</a></li>
+          <li><a href="#team">Team</a></li>
+          <li><a href="#blog">Blog</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Legal</h4>
+        <ul>
+          <li><a href="#">Privacy Policy</a></li>
+          <li><a href="#">Terms of Service</a></li>
+          <li><a href="#">Cookie Policy</a></li>
+          <li><a href="#">Refund Policy</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2025 VisionStack. All rights reserved. Crafted with precision.</p>
+      <p style="color:var(--gold);font-family:var(--font-ui);font-size:.72rem;letter-spacing:.12em">BUILT WITH PURPOSE · DESIGNED WITH SOUL</p>
+    </div>
+  </div>
+</footer>
+
+<!-- CHATBOT -->
+<button id="chatbot-toggle" onclick="toggleChat()"><i class="fas fa-comment-dots"></i></button>
+<div id="chatbot-window">
+  <div class="chat-header">
+    <div class="chat-header-info">
+      <div class="chat-avatar">VS</div>
+      <div>
+        <div class="chat-name">VisionStack AI</div>
+        <div class="chat-status">● Online</div>
+      </div>
+    </div>
+    <button class="chat-close" onclick="toggleChat()"><i class="fas fa-times"></i></button>
+  </div>
+  <div class="chat-messages" id="chatMessages">
+    <div class="chat-msg bot">Hello! 👋 I'm the VisionStack assistant. How can I help you today? Ask me about our services, pricing, or start a project!</div>
+  </div>
+  <div class="chat-input-area">
+    <input type="text" id="chatInput" placeholder="Type a message..." onkeydown="if(event.key==='Enter')sendChat()"/>
+    <button onclick="sendChat()"><i class="fas fa-paper-plane"></i></button>
+  </div>
+</div>
+
+<!-- PROJECT REQUEST MODAL -->
+<div class="modal-overlay" id="requestModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h2>Start Your Project</h2>
+      <button class="modal-close" onclick="closeModal('requestModal')"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body">
+      <div class="step-indicator" id="stepIndicator"></div>
+      <!-- Step 1 -->
+      <div class="step-panel active" id="step1">
+        <h3>Personal Information</h3>
+        <div class="form-row">
+          <div class="form-group"><label>Full Name *</label><input type="text" id="req-name" placeholder="Your full name"/></div>
+          <div class="form-group"><label>Email Address *</label><input type="email" id="req-email" placeholder="your@email.com"/></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>Phone Number</label><input type="tel" id="req-phone" placeholder="+91 98765 43210"/></div>
+          <div class="form-group"><label>Business Name</label><input type="text" id="req-business" placeholder="Your company or brand"/></div>
+        </div>
+        <div class="form-nav">
+          <div></div>
+          <button class="btn-primary" onclick="nextStep(2)"><span>Next Step →</span></button>
+        </div>
+      </div>
+      <!-- Step 2 -->
+      <div class="step-panel" id="step2">
+        <h3>Project Details</h3>
+        <div class="form-group"><label>Type of Website *</label>
+          <div class="type-grid">
+            <div class="type-option" onclick="selectType(this,'Portfolio')"><i class="fas fa-user-tie"></i>Portfolio</div>
+            <div class="type-option" onclick="selectType(this,'Ecommerce')"><i class="fas fa-shopping-cart"></i>E-commerce</div>
+            <div class="type-option" onclick="selectType(this,'Business')"><i class="fas fa-building"></i>Business</div>
+            <div class="type-option" onclick="selectType(this,'Blog')"><i class="fas fa-blog"></i>Blog</div>
+            <div class="type-option" onclick="selectType(this,'AI Website')"><i class="fas fa-robot"></i>AI Website</div>
+            <div class="type-option" onclick="selectType(this,'Custom')"><i class="fas fa-magic"></i>Custom</div>
+          </div>
+        </div>
+        <div class="form-group"><label>Preferred Design Style</label>
+          <select id="req-style"><option value="">Select a style...</option><option>Minimalist & Clean</option><option>Dark & Luxury</option><option>Bold & Colorful</option><option>Corporate & Professional</option><option>Creative & Experimental</option></select>
+        </div>
+        <div class="form-nav">
+          <button class="btn-secondary" onclick="prevStep(1)">← Back</button>
+          <button class="btn-primary" onclick="nextStep(3)"><span>Next Step →</span></button>
+        </div>
+      </div>
+      <!-- Step 3 -->
+      <div class="step-panel" id="step3">
+        <h3>Budget & Timeline</h3>
+        <div class="form-row">
+          <div class="form-group"><label>Budget Range *</label>
+            <select id="req-budget"><option value="">Select budget...</option><option>Under $1,500</option><option>$1,500 – $3,999</option><option>$4,000 – $9,999</option><option>$10,000+</option><option>Discuss with team</option></select>
+          </div>
+          <div class="form-group"><label>Deadline (Days)</label><input type="number" id="req-deadline" placeholder="e.g. 30" min="7"/></div>
+        </div>
+        <div class="form-group"><label>Reference Website Links</label><input type="text" id="req-refs" placeholder="https://example.com, https://another.com"/></div>
+        <div class="form-group"><label>Features Required</label><textarea id="req-features" placeholder="e.g. User login, payment gateway, blog, admin panel, animations..."></textarea></div>
+        <div class="form-group"><label>Additional Notes</label><textarea id="req-notes" placeholder="Anything else we should know about your project..."></textarea></div>
+        <div class="form-group"><label>Attach Files (Images, PDFs, Videos)</label><input type="file" id="req-files" multiple accept="image/*,.pdf,video/*" style="color:var(--silver)"/></div>
+        <div class="form-nav">
+          <button class="btn-secondary" onclick="prevStep(2)">← Back</button>
+          <button class="btn-primary" onclick="submitRequest()"><span>Submit Request ✓</span></button>
+        </div>
+      </div>
+      <!-- Success -->
+      <div class="step-panel" id="stepSuccess" style="text-align:center;padding:20px 0">
+        <div style="font-size:3rem;margin-bottom:16px">🎉</div>
+        <h3 style="font-size:1.8rem;margin-bottom:12px">Request Submitted!</h3>
+        <p style="color:var(--silver-dim);line-height:1.75">Thank you! Our team will review your request and reach out within 24 hours to discuss your project in detail.</p>
+        <button class="btn-primary" style="margin-top:24px" onclick="closeModal('requestModal')"><span>Close</span></button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- AUTH MODAL -->
+<div class="modal-overlay" id="authModal">
+  <div class="modal" style="max-width:460px">
+    <div class="modal-header">
+      <h2 id="authTitle">Client Portal</h2>
+      <button class="modal-close" onclick="closeModal('authModal')"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body">
+      <div class="auth-tabs">
+        <button class="auth-tab active" onclick="switchAuthTab('login',this)">Sign In</button>
+        <button class="auth-tab" onclick="switchAuthTab('register',this)">Register</button>
+      </div>
+      <div id="loginForm">
+        <div class="form-group"><label>Email Address</label><input type="email" id="auth-email" placeholder="your@email.com"/></div>
+        <div class="form-group"><label>Password</label><input type="password" id="auth-pass" placeholder="••••••••"/></div>
+        <div style="text-align:right;margin-bottom:20px"><a href="#" style="font-size:.8rem;color:var(--gold)">Forgot Password?</a></div>
+        <button class="btn-primary" style="width:100%" onclick="handleLogin()"><span>Sign In</span></button>
+        <p style="text-align:center;margin-top:16px;font-size:.82rem;color:var(--silver-dim)">Are you an admin? <a href="#" style="color:var(--gold)" onclick="alert('Contact your administrator for admin access.')">Admin Login</a></p>
+      </div>
+      <div id="registerForm" style="display:none">
+        <div class="form-row">
+          <div class="form-group"><label>First Name</label><input id="signup-firstname" type="text" placeholder="John"/></div>
+          <div class="form-group"><label>Last Name</label><input id="signup-lastname" type="text" placeholder="Smith"/></div>
+        </div>
+        <div class="form-group"><label>Email Address</label><input id="signup-email" type="email" placeholder="your@email.com"/></div>
+        <div class="form-group"><label>Password</label><input id="signup-password" type="password" placeholder="Min 8 characters"/></div>
+        <div class="form-group"><label>Confirm Password</label><input id="signup-confirm" type="password" placeholder="Repeat password"/></div>
+        <button class="btn-primary" style="width:100%;margin-top:8px" onclick="handleRegister()"><span>Create Account</span></button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ========================
+// LOADER
+// ========================
+window.addEventListener('load',()=>{
+  setTimeout(()=>{
+    document.getElementById('loader').style.opacity='0';
+    setTimeout(()=>document.getElementById('loader').style.display='none',500);
+    document.getElementById('loader').style.transition='opacity .5s';
+  },2400);
+});
+
+// ========================
+// CUSTOM CURSOR
+// ========================
+const cursor=document.getElementById('cursor');
+const trail=document.getElementById('cursor-trail');
+let mouseX=0,mouseY=0,trailX=0,trailY=0;
+document.addEventListener('mousemove',e=>{
+  mouseX=e.clientX;mouseY=e.clientY;
+  cursor.style.left=mouseX+'px';cursor.style.top=mouseY+'px';
+});
+function animateTrail(){
+  trailX+=(mouseX-trailX)*.15;
+  trailY+=(mouseY-trailY)*.15;
+  trail.style.left=trailX+'px';trail.style.top=trailY+'px';
+  requestAnimationFrame(animateTrail);
+}
+animateTrail();
+document.querySelectorAll('a,button,.service-card,.portfolio-card,.team-card,.pricing-card,.blog-card,.type-option,.filter-btn').forEach(el=>{
+  el.addEventListener('mouseenter',()=>{cursor.style.width='20px';cursor.style.height='20px';cursor.style.background='transparent';cursor.style.border='2px solid var(--gold)'});
+  el.addEventListener('mouseleave',()=>{cursor.style.width='12px';cursor.style.height='12px';cursor.style.background='var(--gold)';cursor.style.border='none'});
+});
+
+// ========================
+// PARTICLES
+// ========================
+const canvas=document.getElementById('particles-canvas');
+const ctx=canvas.getContext('2d');
+let particles=[];
+function resize(){canvas.width=window.innerWidth;canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',resize);
+class Particle{
+  constructor(){this.reset()}
+  reset(){
+    this.x=Math.random()*canvas.width;
+    this.y=Math.random()*canvas.height;
+    this.vx=(Math.random()-.5)*.3;
+    this.vy=(Math.random()-.5)*.3;
+    this.size=Math.random()*1.5+.3;
+    this.opacity=Math.random()*.4+.05;
+    this.color=Math.random()>.6?'201,162,39':'123,47,255';
+  }
+  update(){
+    this.x+=this.vx;this.y+=this.vy;
+    if(this.x<0||this.x>canvas.width||this.y<0||this.y>canvas.height)this.reset();
+  }
+  draw(){
+    ctx.beginPath();
+    ctx.arc(this.x,this.y,this.size,0,Math.PI*2);
+    ctx.fillStyle=`rgba(${this.color},${this.opacity})`;
+    ctx.fill();
+  }
+}
+for(let i=0;i<120;i++)particles.push(new Particle());
+function animateParticles(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  particles.forEach(p=>{p.update();p.draw()});
+  // Draw connections
+  particles.forEach((p,i)=>{
+    particles.slice(i+1).forEach(q=>{
+      const d=Math.hypot(p.x-q.x,p.y-q.y);
+      if(d<100){
+        ctx.beginPath();
+        ctx.moveTo(p.x,p.y);ctx.lineTo(q.x,q.y);
+        ctx.strokeStyle=`rgba(201,162,39,${.06*(1-d/100)})`;
+        ctx.lineWidth=.5;ctx.stroke();
+      }
+    });
+  });
+  requestAnimationFrame(animateParticles);
+}
+animateParticles();
+
+// ========================
+// NAVBAR SCROLL
+// ========================
+window.addEventListener('scroll',()=>{
+  const nav=document.getElementById('navbar');
+  nav.classList.toggle('scrolled',window.scrollY>50);
+});
+
+// ========================
+// TYPEWRITER
+// ========================
+const phrases=[
+  'Turning Ideas Into Powerful Digital Experiences.',
+  'Engineering Websites With Purpose & Precision.',
+  'Where Vision Meets Technology.',
+  'Premium Craft. Exceptional Results.',
+];
+let pi=0,ci=0,deleting=false;
+const el=document.getElementById('typewriter-text');
+function type(){
+  const ph=phrases[pi];
+  if(!deleting){
+    el.textContent=ph.slice(0,++ci);
+    if(ci===ph.length){deleting=true;setTimeout(type,2200);return}
+  }else{
+    el.textContent=ph.slice(0,--ci);
+    if(ci===0){deleting=false;pi=(pi+1)%phrases.length}
+  }
+  setTimeout(type,deleting?40:60);
+}
+setTimeout(type,3000);
+
+// ========================
+// SCROLL REVEAL
+// ========================
+const observer=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){e.target.classList.add('visible')}
+  });
+},{threshold:.1,rootMargin:'0px 0px -40px 0px'});
+document.querySelectorAll('.reveal,.reveal-left,.reveal-right,.process-step').forEach(el=>observer.observe(el));
+
+// Stagger service cards
+document.querySelectorAll('.service-card').forEach((card,i)=>{
+  card.style.transitionDelay=`${i*.07}s`;
+});
+
+// ========================
+// ANIMATED COUNTERS
+// ========================
+const counterObserver=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      const el=e.target;
+      const target=parseInt(el.dataset.target);
+      const suffix=el.dataset.suffix||'';
+      let current=0;
+      const inc=target/60;
+      const timer=setInterval(()=>{
+        current=Math.min(current+inc,target);
+        el.textContent=Math.floor(current)+suffix;
+        if(current>=target){el.textContent=target+suffix;clearInterval(timer)}
+      },25);
+      counterObserver.unobserve(el);
+    }
+  });
+},{threshold:.5});
+document.querySelectorAll('.stat-num').forEach(el=>{
+  if(el.dataset.target==='98')el.dataset.suffix='%';
+  counterObserver.observe(el);
+});
+
+// ========================
+// PORTFOLIO FILTERS
+// ========================
+document.querySelectorAll('.filter-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    const filter=btn.dataset.filter;
+    document.querySelectorAll('.portfolio-card').forEach(card=>{
+      const show=filter==='all'||card.dataset.cat===filter;
+      card.style.opacity=show?'1':'0.2';
+      card.style.transform=show?'scale(1)':'scale(0.95)';
+      card.style.transition='all .4s';
+    });
+  });
+});
+
+// ========================
+// TESTIMONIALS SLIDER
+// ========================
+let slideIndex=0;
+const track=document.getElementById('testimonialTrack');
+const cards=track.querySelectorAll('.testimonial-card');
+const totalSlides=cards.length;
+let visibleCount=window.innerWidth<700?1:3;
+const dotsContainer=document.getElementById('sliderDots');
+const maxIndex=Math.ceil(totalSlides/visibleCount)-1;
+
+function buildDots(){
+  dotsContainer.innerHTML='';
+  for(let i=0;i<=maxIndex;i++){
+    const d=document.createElement('div');
+    d.className='slider-dot'+(i===0?' active':'');
+    d.onclick=()=>goSlide(i);
+    dotsContainer.appendChild(d);
+  }
+}
+buildDots();
+function goSlide(i){
+  slideIndex=Math.max(0,Math.min(i,maxIndex));
+  const w=cards[0].offsetWidth+20;
+  track.style.transform=`translateX(-${slideIndex*w*visibleCount}px)`;
+  document.querySelectorAll('.slider-dot').forEach((d,idx)=>d.classList.toggle('active',idx===slideIndex));
+}
+document.getElementById('nextSlide').onclick=()=>goSlide(slideIndex<maxIndex?slideIndex+1:0);
+document.getElementById('prevSlide').onclick=()=>goSlide(slideIndex>0?slideIndex-1:maxIndex);
+setInterval(()=>goSlide(slideIndex<maxIndex?slideIndex+1:0),5000);
+
+// ========================
+// FAQ
+// ========================
+function toggleFaq(btn){
+  const item=btn.closest('.faq-item');
+  item.classList.toggle('open');
+}
+
+// ========================
+// MOBILE NAV
+// ========================
+function openMobileNav(){document.getElementById('mobileNav').classList.add('open')}
+function closeMobileNav(){document.getElementById('mobileNav').classList.remove('open')}
+
+// ========================
+// MODALS
+// ========================
+function openRequestModal(e){e.preventDefault();document.getElementById('requestModal').classList.add('open');initStepIndicator()}
+function openAuthModal(e){e.preventDefault();document.getElementById('authModal').classList.add('open')}
+function closeModal(id){document.getElementById(id).classList.remove('open')}
+document.querySelectorAll('.modal-overlay').forEach(overlay=>{
+  overlay.addEventListener('click',e=>{if(e.target===overlay)overlay.classList.remove('open')});
+});
+
+// Multi-step form
+let currentStep=1;
+const selectedTypes=[];
+function initStepIndicator(){
+  const ind=document.getElementById('stepIndicator');
+  ind.innerHTML='';
+  for(let i=1;i<=3;i++){
+    if(i>1)ind.innerHTML+='<div class="step-line"></div>';
+    ind.innerHTML+=`<div class="step-dot ${i===1?'active':''}" id="stepDot${i}">${i}</div>`;
+  }
+}
+function nextStep(n){
+  document.getElementById(`step${currentStep}`).classList.remove('active');
+  document.getElementById(`stepDot${currentStep}`).className='step-dot done';
+  currentStep=n;
+  document.getElementById(`step${currentStep}`).classList.add('active');
+  document.getElementById(`stepDot${currentStep}`).className='step-dot active';
+}
+function prevStep(n){
+  document.getElementById(`step${currentStep}`).classList.remove('active');
+  document.getElementById(`stepDot${currentStep}`).className='step-dot';
+  currentStep=n;
+  document.getElementById(`step${currentStep}`).classList.add('active');
+  document.getElementById(`stepDot${currentStep}`).className='step-dot active';
+}
+function selectType(el,type){
+  document.querySelectorAll('.type-option').forEach(o=>o.classList.remove('selected'));
+  el.classList.add('selected');
+}
+function submitRequest(){
+  document.getElementById('step3').classList.remove('active');
+  document.getElementById('stepSuccess').classList.add('active');
+  document.getElementById('stepIndicator').innerHTML='';
+  // Here you'd POST to FastAPI backend
+}
+
+// Auth modal
+function switchAuthTab(tab,btn){
+  document.querySelectorAll('.auth-tab').forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('loginForm').style.display=tab==='login'?'block':'none';
+  document.getElementById('registerForm').style.display=tab==='register'?'block':'none';
+}
+function handleLogin(){
+  const email=document.getElementById('auth-email').value;
+  const pass=document.getElementById('auth-pass').value;
+  if(!email||!pass){alert('Please fill in all fields.');return}
+  // POST to /api/auth/login
+  alert('Login functionality connected to backend. API endpoint: POST /api/auth/login');
+}
+async function handleRegister() {
+
+  const first_name = document.getElementById("signup-firstname").value;
+  const last_name = document.getElementById("signup-lastname").value;
+  const email = document.getElementById("signup-email").value;
+  const password = document.getElementById("signup-password").value;
+  const confirm = document.getElementById("signup-confirm").value;
+
+  if(password !== confirm){
+    alert("Passwords do not match");
+    return;
+  }
+  
+  console.log("FIRST =", first_name);
+  console.log("LAST =", last_name);
+  console.log("EMAIL =", email);
+  const response = await fetch("http://127.0.0.1:8000/api/auth/register", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+    first_name: first_name,
+    last_name: last_name,
+    email: email,
+    password: password
+})
+  });
+
+  const data = await response.json();
+
+  console.log(data);
+
+  if(response.ok){
+    alert("Registration Successful 🎉");
+  } else {
+    alert(JSON.stringify(data));
+  }
+}
+
+// ========================
+// CHATBOT
+// ========================
+let chatOpen=false;
+function toggleChat(){
+  chatOpen=!chatOpen;
+  document.getElementById('chatbot-window').classList.toggle('open',chatOpen);
+  document.querySelector('#chatbot-toggle i').className=chatOpen?'fas fa-times':'fas fa-comment-dots';
+}
+const botReplies=[
+  "Great question! We specialize in full-stack web development, UI/UX design, e-commerce, and AI integrations.",
+  "Our projects typically range from $1,499 for simple sites to $10,000+ for enterprise solutions. Would you like a custom quote?",
+  "Timelines vary — simple sites take 2–4 weeks, complex builds 6–12 weeks. We'll give you an exact timeline after discovery.",
+  "Absolutely! Click 'Get Started' to fill out our project request form and we'll get back to you within 24 hours.",
+  "We work with React, Next.js, Python FastAPI, Node.js, MongoDB, and many more modern technologies.",
+  "Yes! All projects include post-launch support. Our Professional plan includes 90 days and Enterprise includes 1 year.",
+];
+let replyIndex=0;
+function sendChat(){
+  const input=document.getElementById('chatInput');
+  const msg=input.value.trim();
+  if(!msg)return;
+  const msgs=document.getElementById('chatMessages');
+  msgs.innerHTML+=`<div class="chat-msg user">${msg}</div>`;
+  input.value='';
+  setTimeout(()=>{
+    msgs.innerHTML+=`<div class="chat-msg bot">${botReplies[replyIndex%botReplies.length]}</div>`;
+    replyIndex++;msgs.scrollTop=msgs.scrollHeight;
+  },700);
+  msgs.scrollTop=msgs.scrollHeight;
+}
+
+// ========================
+// CONTACT FORM
+// ========================
+function sendContactForm(){
+  alert('Message sent! We\'ll get back to you within 24 hours.\n\n(API endpoint: POST /api/contact)');
+}
+
+// ========================
+// NEWSLETTER
+// ========================
+function subscribeNewsletter(){
+  const input=document.querySelector('.newsletter-form input');
+  if(!input.value){alert('Please enter your email.');return}
+  input.value='';
+  alert('You\'re subscribed! Welcome to the VisionStack community.');
+}
+
+// ========================
+// PROCESS STEP STAGGER
+// ========================
+const processSteps=document.querySelectorAll('.process-step');
+processSteps.forEach((step,i)=>step.style.transitionDelay=`${i*.12}s`);
+</script>
+<script>
+
+setTimeout(() => {
+
+    document
+        .getElementById('intro')
+        .classList.add('fade-out');
+
+}, 4500);
+
+</script>
+</body>
+</html>
